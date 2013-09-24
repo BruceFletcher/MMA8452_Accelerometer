@@ -80,13 +80,6 @@ void readAccelData(int *destination)
     int gCount = (rawData[i*2] << 8) | rawData[(i*2)+1];  //Combine the two 8 bit registers into one 12-bit number
     gCount >>= 4; //The registers are left align, here we right align the 12-bit integer
 
-    // If the number is negative, we have to make it so manually (no 12-bit data type)
-    if (rawData[i*2] > 0x7F)
-    {  
-      gCount = ~gCount + 1;
-      gCount *= -1;  // Transform into negative 2's complement #
-    }
-
     destination[i] = gCount; //Record this gCount into the 3 int array
   }
 }
