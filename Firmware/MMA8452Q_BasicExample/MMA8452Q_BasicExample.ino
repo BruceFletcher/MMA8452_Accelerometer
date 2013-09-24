@@ -22,6 +22,7 @@
  The MMA8452 has built in pull-up resistors for I2C so you do not need additional pull-ups.
  */
 
+#include <limits.h>
 #include <Wire.h> // Used for I2C
 
 // The SparkFun breakout board defaults to 1, set to 0 if SA0 jumper on the bottom of the board is set
@@ -78,6 +79,10 @@ void readAccelData(int *destination)
   for(int i = 0; i < 3 ; i++)
   {
     int gCount = (rawData[i*2] << 8) | rawData[(i*2)+1];  //Combine the two 8 bit registers into one 12-bit number
+#if INT_MAX == 0x7fffffff  // sign-extend on 32-bit processors like Teensy 3
+    if (gCount & 0x8000)
+      gCount |= 0xffff0000;
+#endif
     gCount >>= 4; //The registers are left align, here we right align the 12-bit integer
 
     destination[i] = gCount; //Record this gCount into the 3 int array
